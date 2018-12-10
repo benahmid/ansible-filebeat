@@ -1,0 +1,6 @@
+app_user: "filebeat"
+app_group: "filebeat"
+
+app_size: 1g
+log_size: 10g
+data_size: 10g

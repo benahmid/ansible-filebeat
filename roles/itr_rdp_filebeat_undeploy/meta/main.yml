@@ -1,0 +1,8 @@
+galaxy_info:
+  author: Frédéric BLANC - 915301 - Lego
+  company: ITR/RDB
+  description: filebeat undeployment
+  min_ansible_version: 2.5
+  licence: N/A
+
+dependencies: []

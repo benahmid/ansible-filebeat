@@ -1,0 +1,33 @@
+---
+fs_name: "filebeat"
+app_archive: "filebeat-6.2.4-linux-x86_64.tar.gz"
+
+apps_folder_path: "/apps/{{ fs_name }}"
+logs_folder_path: "/var/log/{{ fs_name }}"
+data_folder_path: "/var/lib/{{ fs_name }}"
+
+app_volumes:
+- apps_folder:
+  path: "{{ apps_folder_path }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_app"
+  size: "{{ app_size }}"
+  permission: "700"
+  opts: "defaults,nodev,exec"
+- logs_folder:
+  path: "{{ logs_folder_path }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_logs"
+  size: "{{ log_size }}"
+  permission: "755"
+  opts: "defaults,nodev,noexec"
+- data_folder:
+  path: "{{ data_folder_path }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_data"
+  size: "{{ data_size }}"
+  permission: "700"
+  opts: "defaults,nodev,noexec"
+
+logstash_url: "localhost:5044"
+logstash_ssl_enable: false

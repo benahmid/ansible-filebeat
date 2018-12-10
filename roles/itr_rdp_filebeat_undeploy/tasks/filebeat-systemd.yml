@@ -1,0 +1,27 @@
+---
+- name: Remove App systemd file
+  stat:
+    path: "/usr/lib/systemd/system/filebeat.service"
+  register: systemd_file_result
+
+# need to stop the service (and disable it) if it exist
+- name: disable service filebeat, ensure it is masked and stopped
+  systemd:
+    name: "filebeat"
+    state: stopped
+    enabled: false
+  become: true
+  when: systemd_file_result.stat.exists
+
+- name: Remove App systemd file
+  file:
+    path: "/usr/lib/systemd/system/filebeat.service"
+    state: absent
+  register: systemd_result
+  become: true
+
+- name: just force systemd to reload
+  systemd: 
+    daemon_reload: true
+  become: true
+  when: systemd_result is changed

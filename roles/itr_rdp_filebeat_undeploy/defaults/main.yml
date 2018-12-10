@@ -1,0 +1,3 @@
+app_user: "filebeat"
+app_group: "filebeat"
+

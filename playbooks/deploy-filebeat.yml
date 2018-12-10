@@ -1,0 +1,5 @@
+---
+- hosts: filebeat
+  roles: 
+    - itr_rdp_filebeat_deploy
+

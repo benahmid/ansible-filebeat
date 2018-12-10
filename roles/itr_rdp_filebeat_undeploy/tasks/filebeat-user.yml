@@ -1,0 +1,14 @@
+---
+- name: Clean the user '{{ app_user }}'
+  user:
+    name: "{{ app_user }}"
+    state: absent
+  become: true
+
+- name: Clean group "{{ app_group }}"
+  group:
+    name: "{{ app_group }}"
+    state: absent
+  become: true
+
+

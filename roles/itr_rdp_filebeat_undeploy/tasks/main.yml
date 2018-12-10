@@ -1,0 +1,7 @@
+---
+- name: Clean App systemd Configuration
+  include_tasks: "filebeat-systemd.yml"
+- name: Clean App FileSystem
+  include_tasks: "filebeat-filesystem.yml"
+- name: Clean App User
+  include_tasks: "filebeat-user.yml"

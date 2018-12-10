@@ -1,0 +1,50 @@
+---
+- name: Check application volumes
+  lvol:
+    vg: "{{ item.vg }}"
+    lv: "{{ item.lv }}"
+    size: "{{ item.size }}"
+    shrink: false
+    state: present
+  become: true
+  register: lvolResult
+  with_items: "{{ app_volumes }}"
+
+- name: Unmount to check the file system
+  mount:
+    path: "{{ item.path }}"
+    state: unmounted
+  become: true
+  when: lvolResult is changed
+  with_items: "{{ app_volumes }}"
+
+- name: Check application volume file system
+  filesystem:
+    fstype: ext4
+    dev: "/dev/vg_apps/{{ item.lv }}"
+    resizefs: true
+  become: true
+  with_items: "{{ app_volumes }}"
+
+- name: Check application folder mount points
+  mount:
+    path: "{{ item.path }}"
+    src: "/dev/vg_apps/{{ item.lv }}"
+    fstype: ext4
+    opts: "{{ item.opts }}"
+    dump: 1
+    passno: 2
+    state: mounted
+  become: true
+  with_items: "{{ app_volumes }}"
+
+- name: Check application's volumes folder
+  file:
+    name: "{{ item.path }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "{{ item.permission }}"
+  become: true
+  with_items: "{{ app_volumes }}"
+

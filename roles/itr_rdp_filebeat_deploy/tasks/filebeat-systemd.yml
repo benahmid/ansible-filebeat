@@ -1,0 +1,47 @@
+---
+- name: Set to_restart to false if not already defined
+  set_fact:
+    to_restart: false
+  when: to_restart is not defined
+
+- name: filebeat systemd configuration
+  template:
+    src: "filebeat.service.j2"
+    dest: "/usr/lib/systemd/system/filebeat.service"
+    owner: "root"
+    group: "root"
+    mode: "u+rw-x,g+r-wx,o+r-wx"
+  register: systemd_service_result
+  become: true
+  
+- name: just force systemd to reload
+  systemd: 
+    daemon_reload: true
+  become: true
+  when: systemd_service_result is changed
+  
+- name: just force systemd to reload
+  set_fact:
+    to_restart: true
+  when: systemd_service_result is changed
+  
+- name: enable service filebeat and ensure it is not masked
+  systemd:
+    name: filebeat
+    enabled: true
+    masked: false
+  become: true
+
+- name: ensure the service filebeat is started
+  systemd:
+    name: filebeat
+    state: started
+  register: systemd_service_start_result
+  become: true
+  
+- name: ensure the service filebeat is restarted if needed
+  systemd:
+    name: filebeat
+    state: restarted
+  when: systemd_service_start_result is not changed and to_restart
+  become: true

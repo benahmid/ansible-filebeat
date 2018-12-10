@@ -1,0 +1,39 @@
+---
+- name: Find all enabled modules except logstash
+  find:
+    paths: "{{ apps_folder_path }}/modules.d"
+    patterns: "*.yml"
+    excludes: "logstash.yml"
+  register: modules_to_remove
+  become: true
+
+- name: Remove unneeded modules
+  file:
+    path: "{{ item.path }}"
+    state: "absent"
+  with_items: "{{ modules_to_remove.files }}"
+  register: remove_modules_result
+  become: true
+
+- name: Enable logstash module
+  synchronize:
+    src: "{{ apps_folder_path }}/modules.d/logstash.yml.disabled"
+    dest: "{{ apps_folder_path }}/modules.d/logstash.yml"
+  delegate_to: "{{ inventory_hostname }}"
+  register: enable_module_result
+  become: true
+
+- name: filebeat configuration
+  template:
+    src: "filebeat.yml.j2"
+    dest: "{{ apps_folder_path }}/filebeat.yml"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "u+rw,g-rwx,o-rwx"
+  register: configure_result
+  become: true
+
+- name: Track restart
+  set_fact:
+    to_restart: true
+  when: enable_module_result is changed or configure_result is changed or remove_modules_result is changed

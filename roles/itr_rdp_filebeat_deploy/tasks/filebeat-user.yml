@@ -1,0 +1,19 @@
+---
+- name: Ensure group "{{ app_group }}" exists
+  group:
+    name: "{{ app_group }}"
+    state: present
+    system: true
+  become: true
+
+- name: Add the user '{{ app_user }}' with a specific uid and a primary group of '{{ app_group }}'
+  user:
+    name: "{{ app_user }}"
+    comment: "{{ app_user }} user"
+    group: "{{ app_group }}"
+    shell: /usr/sbin/nologin
+    state: present
+    system: true
+    create_home: false
+  become: true
+

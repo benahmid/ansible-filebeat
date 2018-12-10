@@ -1,0 +1,29 @@
+---
+- name: Unpackage Archive
+  unarchive:
+    src: "{{ app_archive }}"
+    dest: "{{ apps_folder_path }}"
+    exclude: "filebeat.yml"
+    copy: true
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "u+rw,g-rwx,o-rwx"
+    extra_opts: "--strip-components=1"
+  register: unpackage_result
+  become: true
+
+- name: Track restart
+  set_fact:
+    to_restart: true
+  when: unpackage_result is changed
+  
+# need to be done if some files already exist and have incorrect permissions
+- name: fix permissions
+  file:
+    path: "{{ apps_folder_path }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "u+rw,g-rwx,o-rwx"
+    recurse: true
+  become: true
+  

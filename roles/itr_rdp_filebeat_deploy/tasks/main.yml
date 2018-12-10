@@ -1,0 +1,11 @@
+---
+- name: App User Creation
+  include_tasks: "filebeat-user.yml"
+- name: App FileSystem Creation
+  include_tasks: "filebeat-filesystem.yml"
+- name: App Unarchive
+  include_tasks: "filebeat-deploy-archive.yml"
+- name: App Configuration
+  include_tasks: "filebeat-configuration.yml"
+- name: App systemd Configuration
+  include_tasks: "filebeat-systemd.yml"

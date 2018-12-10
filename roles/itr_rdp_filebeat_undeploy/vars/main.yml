@@ -1,0 +1,19 @@
+---
+fs_name: "filebeat"
+
+app_volumes:
+- apps_folder:
+  path: "/apps/{{ fs_name }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_app"
+- logs_folder:
+  path: "/var/log/{{ fs_name }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_logs"
+- data_folder:
+  path: "/var/lib/{{ fs_name }}"
+  vg: "vg_apps"
+  lv: "lv_{{ fs_name }}_data"
+
+logstash_url: "http://localhost:5044"
+logstash_ssl_enable: false
